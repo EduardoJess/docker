@@ -86,8 +86,10 @@ Explica en una o dos líneas qué significa cada uno de estos elementos. Escribe
 Responde además a estas dos preguntas en la sección [✍️ Tus respuestas](#️-tus-respuestas):
 
 1. WordPress se conecta a la base de datos con `WORDPRESS_DB_HOST: db`. ¿Por qué basta con escribir `db`?
-2. Si ejecutas `docker compose down` y después `docker compose up -d`, ¿sigue estando tu WordPress instalado? ¿Por qué?
+Gracias al servidor DNS que entiende que db es el nombre que representa una IP. 
 
+2.  Si ejecutas `docker compose down` y después `docker compose up -d`, ¿sigue estando tu WordPress instalado? ¿Por qué?
+Sí. Debido a que los datos se guardan en los volumenes creados.
 ---
 
 ## ➕ Parte 3 · Añadir un nuevo servicio: phpMyAdmin
@@ -180,7 +182,13 @@ docker compose up -d
 Responde en la sección [✍️ Tus respuestas](#️-tus-respuestas)
 
 1. ¿Qué hace cada una de las tres variables `PMA_HOST`, `PMA_USER` y `PMA_PASSWORD`?
+PMA_HOST guarda la informacion del servidor.
+PMA_USER guarda la informacion del usuario.
+PMA_PASSWORD guarda la contraseña.
+
 2. Al ejecutar `docker compose up -d`, ¿qué contenedores se han recreado y cuáles no? ¿Por qué?
+
+
 3. El login automático es cómodo, pero **¿qué riesgo tiene?** ¿Lo usarías en un servidor de producción?
 
 Sube los cambios:
@@ -235,15 +243,22 @@ Pega aquí el contenido final de tu `docker-compose.yml`:
 | `volumes` (al final del fichero) | |
 
 1. **¿Por qué basta con escribir `db`?**
+Gracias al servidor DNS quien conoce que nombres tiene cada ip y viceversa.
+
 2. **¿Sigue instalado WordPress tras `down` y `up`?**
+Sí, gracias a los volumenes. Quienes guardan la informacion como carpetas.
 
 ### Parte 3 · Fase 1
 
 1. **`depends_on`:**
 2. **¿Por qué `db` y no `localhost`?**
-
+Porque ya no es algo que corre en nuestro ordenador, db es porque pasa a ser una aplicacion externa.
 ### Parte 3 · Fase 2
 
-1. **`PMA_HOST`, `PMA_USER`, `PMA_PASSWORD`:**
+1. **`PMA_HOST` contiene la informacion del servidor, `PMA_USER` contiene las credenciales del usuario, `PMA_PASSWORD` guarda las conteaseñas para cada usuario:**
+
 2. **Contenedores recreados:**
+Wordpress y db. 
+
 3. **Riesgo del login automático:**
+Poca seguridad. Cualquier persona podria entrar a nuestro perfil.
