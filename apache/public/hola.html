@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ruleta de cine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e1015;
+    --surface:#171a22;
+    --surface-2:#1e212b;
+    --line: rgba(243,240,232,0.12);
+    --text:#f3f0e8;
+    --text-dim:#9ba0ad;
+    --gold:#e3ae4e;
+    --gold-dim:#7a6230;
+    --comedia:#e3ae4e;
+    --drama:#c0524a;
+    --otros:#4f8fa6;
+    --radius: 3px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(227,174,78,0.08), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:64px 24px 80px;
+  }
+
+  /* ---------- Hero ---------- */
+  header{
+    text-align:center;
+    margin-bottom:48px;
+  }
+  .eyebrow{
+    font-size:13px;
+    color:var(--text-dim);
+    letter-spacing:0.02em;
+    margin:0 0 14px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(2.4rem, 7vw, 3.6rem);
+    line-height:1.05;
+    margin:0 0 16px;
+    letter-spacing:-0.01em;
+  }
+  h1 em{
+    font-style:italic;
+    font-weight:500;
+    color:var(--gold);
+  }
+  header p{
+    color:var(--text-dim);
+    font-size:16px;
+    max-width:38ch;
+    margin:0 auto;
+    line-height:1.5;
+  }
+
+  /* ---------- Category chips ---------- */
+  .categorias{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:36px 0 28px;
+  }
+  .chip{
+    appearance:none;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-size:14.5px;
+    font-weight:500;
+    padding:10px 20px;
+    border-radius:100px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    transition:border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  .chip:hover{ transform:translateY(-1px); }
+  .chip .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--dot-color, var(--text-dim));
+    flex:none;
+  }
+  .chip[aria-pressed="true"]{
+    background:var(--surface-2);
+    border-color:var(--dot-color, var(--gold));
+    box-shadow: 0 0 0 1px var(--dot-color, var(--gold)) inset;
+  }
+
+  /* ---------- Button ---------- */
+  .accion{
+    display:flex;
+    justify-content:center;
+    margin-bottom:12px;
+  }
+  #sortear{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    background:var(--gold);
+    color:#171a22;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:16px;
+    padding:16px 38px;
+    border-radius:100px;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+    box-shadow: 0 10px 30px -12px rgba(227,174,78,0.55);
+  }
+  #sortear:hover{ transform:translateY(-2px); background:#eebb63; }
+  #sortear:active{ transform:translateY(0); }
+  #sortear:disabled{ opacity:0.55; cursor:not-allowed; transform:none; }
+
+  .aviso{
+    text-align:center;
+    font-size:13px;
+    color:var(--text-dim);
+    min-height:18px;
+    margin-bottom:44px;
+  }
+
+  /* ---------- Result: ticket ---------- */
+  #resultado{ min-height:1px; }
+
+  .ticket{
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    animation: subir .45s cubic-bezier(.2,.7,.3,1);
+  }
+  @keyframes subir{
+    from{ opacity:0; transform:translateY(14px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .ticket{ animation:none; }
+  }
+
+  .perforado{
+    display:flex;
+    gap:9px;
+    padding:14px 20px;
+    background:var(--surface-2);
+    overflow:hidden;
+  }
+  .perforado span{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--bg);
+    flex:none;
+  }
+  .perforado.abajo{ border-top:1px dashed var(--line); }
+
+  .ticket-cuerpo{
+    padding:32px 30px 30px;
+  }
+  .franja{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .franja .dot{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--cat-color, var(--gold));
+    flex:none;
+  }
+  .franja span{
+    font-size:12.5px;
+    color:var(--text-dim);
+  }
+
+  .titulo-pelicula{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(1.7rem, 5vw, 2.2rem);
+    line-height:1.15;
+    margin:0 0 6px;
+  }
+  .meta-pelicula{
+    color:var(--text-dim);
+    font-size:14.5px;
+    margin:0 0 20px;
+  }
+  .sinopsis{
+    font-size:15.5px;
+    line-height:1.65;
+    color:#dcd8cf;
+    margin:0 0 22px;
+    max-width:52ch;
+  }
+  .footer-ticket{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-top:1px solid var(--line);
+    padding-top:18px;
+    font-size:12.5px;
+    color:var(--text-dim);
+  }
+  .footer-ticket .admision{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    color:var(--text);
+    font-size:14px;
+  }
+
+  .placeholder{
+    text-align:center;
+    padding:60px 24px;
+    border:1px dashed var(--line);
+    border-radius:14px;
+    color:var(--text-dim);
+    font-size:15px;
+  }
+
+  footer.pie{
+    text-align:center;
+    margin-top:56px;
+    font-size:12.5px;
+    color:var(--text-dim);
+  }
+
+  @media (max-width:420px){
+    #sortear{ width:100%; }
+    .accion{ padding:0 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Sesión sorpresa</p>
+    <h1>Deja que la suerte<br>elija <em>tu próxima película</em></h1>
+    <p>Marca las categorías donde quieres probar suerte y presiona el botón. Nada de scroll infinito buscando qué ver.</p>
+  </header>
+
+  <div class="categorias" id="categorias">
+    <button class="chip" data-cat="comedia" aria-pressed="true" style="--dot-color:var(--comedia)">
+      <span class="dot"></span> Comedia
+    </button>
+    <button class="chip" data-cat="drama" aria-pressed="true" style="--dot-color:var(--drama)">
+      <span class="dot"></span> Drama
+    </button>
+    <button class="chip" data-cat="otros" aria-pressed="true" style="--dot-color:var(--otros)">
+      <span class="dot"></span> Otros
+    </button>
+  </div>
+
+  <div class="accion">
+    <button id="sortear">Dame una película</button>
+  </div>
+  <p class="aviso" id="aviso"></p>
+
+  <div id="resultado">
+    <div class="placeholder">Tu boleto aparecerá aquí.</div>
+  </div>
+
+  <footer class="pie">Catálogo curado a mano · vuelve a presionar el botón cuantas veces quieras</footer>
+</div>
+
+<script>
+const CATEGORIAS = {
+  comedia: { color: 'var(--comedia)', etiqueta: 'Comedia' },
+  drama:   { color: 'var(--drama)',   etiqueta: 'Drama' },
+  otros:   { color: 'var(--otros)',   etiqueta: 'Otros géneros' }
+};
+
+const PELICULAS = [
+  // Comedia
+  { titulo:'El gran Lebowski', anio:1998, director:'Joel y Ethan Coen', categoria:'comedia', genero:'Comedia negra', sinopsis:'Un despistado amante del bolos es confundido con un millonario y arrastrado a un lío que no pidió ni entiende.' },
+  { titulo:'Superbad', anio:2007, director:'Greg Mottola', categoria:'comedia', genero:'Comedia adolescente', sinopsis:'Dos amigos de instituto tienen una noche larguísima intentando conseguir alcohol antes de separarse rumbo a la universidad.' },
+  { titulo:'Como estrellas en la tierra', anio:2007, director:'Aamir Khan', categoria:'comedia', genero:'Comedia dramática', sinopsis:'Un maestro poco convencional ayuda a un niño con dislexia a descubrir su talento, entre risas y ternura.' },
+  { titulo:'Los productores', anio:1967, director:'Mel Brooks', categoria:'comedia', genero:'Comedia musical', sinopsis:'Dos productores de Broadway montan a propósito el peor musical posible para quedarse con el dinero de los inversores.' },
+  { titulo:'Zoolander', anio:2001, director:'Ben Stiller', categoria:'comedia', genero:'Sátira', sinopsis:'Un modelo con más músculo que cerebro se convierte, sin saberlo, en el arma perfecta de una conspiración de la moda.' },
+  { titulo:'Intocable', anio:2011, director:'Olivier Nakache, Éric Toledano', categoria:'comedia', genero:'Comedia dramática', sinopsis:'Un aristócrata tetrapléjico contrata como cuidador a un joven de los suburbios y nace una amistad tan honesta como divertida.' },
+  { titulo:'Jojo Rabbit', anio:2019, director:'Taika Waititi', categoria:'comedia', genero:'Sátira histórica', sinopsis:'Un niño alemán con un amigo imaginario un tanto ridículo descubre que su madre esconde a una joven judía en casa.' },
+  { titulo:'La vida de Brian', anio:1979, director:'Terry Jones', categoria:'comedia', genero:'Sátira', sinopsis:'Un hombre nacido el mismo día y al lado de Jesús es confundido una y otra vez con el mesías, para su completa desgracia.' },
+
+  // Drama
+  { titulo:'El padrino', anio:1972, director:'Francis Ford Coppola', categoria:'drama', genero:'Drama criminal', sinopsis:'El hijo reacio de un patriarca mafioso termina heredando un imperio familiar que jamás quiso dirigir.' },
+  { titulo:'Un lugar en el mundo', anio:1992, director:'Adolfo Aristarain', categoria:'drama', genero:'Drama social', sinopsis:'Una familia idealista intenta sostener sus principios en un pueblo rural argentino marcado por intereses ajenos.' },
+  { titulo:'Manchester frente al mar', anio:2016, director:'Kenneth Lonergan', categoria:'drama', genero:'Drama familiar', sinopsis:'Un hombre marcado por una tragedia debe volver a su ciudad natal para hacerse cargo de su sobrino adolescente.' },
+  { titulo:'Cadena perpetua', anio:1994, director:'Frank Darabont', categoria:'drama', genero:'Drama carcelario', sinopsis:'Un banquero condenado por un crimen que no cometió construye, año tras año, una esperanza silenciosa dentro de la prisión.' },
+  { titulo:'Moonlight', anio:2016, director:'Barry Jenkins', categoria:'drama', genero:'Drama íntimo', sinopsis:'Tres etapas de la vida de un joven afroamericano en Miami retratan su identidad, su soledad y sus primeros afectos.' },
+  { titulo:'Relatos salvajes', anio:2014, director:'Damián Szifron', categoria:'drama', genero:'Drama de episodios', sinopsis:'Seis historias independientes muestran hasta dónde puede llegar una persona común cuando pierde el control.' },
+  { titulo:'Nomadland', anio:2020, director:'Chloé Zhao', categoria:'drama', genero:'Drama contemplativo', sinopsis:'Tras perder su trabajo y su pueblo, una mujer recorre el oeste de Estados Unidos viviendo en su furgoneta.' },
+  { titulo:'La habitación', anio:2015, director:'Lenny Abrahamson', categoria:'drama', genero:'Drama psicológico', sinopsis:'Una madre y su hijo de cinco años, encerrados desde siempre en un cuarto, deben aprender a habitar el mundo exterior.' },
+
+  // Otros géneros
+  { titulo:'Blade Runner 2049', anio:2017, director:'Denis Villeneuve', categoria:'otros', genero:'Ciencia ficción', sinopsis:'Un replicante policía descubre un secreto capaz de desatar el caos entre humanos y máquinas.' },
+  { titulo:'El resplandor', anio:1980, director:'Stanley Kubrick', categoria:'otros', genero:'Terror', sinopsis:'Un hotel aislado por la nieve empieza a desatar la locura de un escritor encargado de cuidarlo durante el invierno.' },
+  { titulo:'Coco', anio:2017, director:'Lee Unkrich, Adrian Molina', categoria:'otros', genero:'Animación', sinopsis:'Un niño mexicano que sueña con la música cruza al mundo de los muertos para descubrir el secreto de su familia.' },
+  { titulo:'Mad Max: Furia en el camino', anio:2015, director:'George Miller', categoria:'otros', genero:'Acción', sinopsis:'En un desierto post apocalíptico, una fuga desesperada se convierte en una persecución interminable de metal y polvo.' },
+  { titulo:'Parásitos', anio:2019, director:'Bong Joon-ho', categoria:'otros', genero:'Thriller', sinopsis:'Una familia sin recursos se infiltra poco a poco en la vida de una familia adinerada, con consecuencias imprevisibles.' },
+  { titulo:'Amélie', anio:2001, director:'Jean-Pierre Jeunet', categoria:'otros', genero:'Fantasía romántica', sinopsis:'Una joven parisina decide cambiar en secreto la vida de quienes la rodean, mientras esquiva la suya propia.' },
+  { titulo:'Whiplash', anio:2014, director:'Damien Chazelle', categoria:'otros', genero:'Thriller musical', sinopsis:'Un baterista obsesionado con la perfección choca con un profesor de conservatorio dispuesto a llevarlo al límite.' },
+  { titulo:'Vivir tu vida', anio:1962, director:'Jean-Luc Godard', categoria:'otros', genero:'Cine de autor', sinopsis:'Doce cuadros narran, con distancia y ternura, el descenso de una joven parisina hacia la prostitución.' }
+];
+
+const chips = Array.from(document.querySelectorAll('.chip'));
+const btn = document.getElementById('sortear');
+const aviso = document.getElementById('aviso');
+const resultado = document.getElementById('resultado');
+let ultima = null;
+
+chips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    const activo = chip.getAttribute('aria-pressed') === 'true';
+    chip.setAttribute('aria-pressed', String(!activo));
+    validar();
+  });
+});
+
+function categoriasActivas(){
+  return chips.filter(c => c.getAttribute('aria-pressed') === 'true').map(c => c.dataset.cat);
+}
+
+function validar(){
+  const activas = categoriasActivas();
+  if(activas.length === 0){
+    btn.disabled = true;
+    aviso.textContent = 'Elige al menos una categoría para continuar.';
+  } else {
+    btn.disabled = false;
+    aviso.textContent = '';
+  }
+  return activas;
+}
+
+btn.addEventListener('click', () => {
+  const activas = validar();
+  if(activas.length === 0) return;
+
+  let candidatas = PELICULAS.filter(p => activas.includes(p.categoria));
+  if(candidatas.length > 1 && ultima){
+    const sinRepetir = candidatas.filter(p => p.titulo !== ultima.titulo);
+    if(sinRepetir.length > 0) candidatas = sinRepetir;
+  }
+
+  const elegida = candidatas[Math.floor(Math.random() * candidatas.length)];
+  ultima = elegida;
+  pintarTicket(elegida);
+});
+
+function pintarTicket(p){
+  const cat = CATEGORIAS[p.categoria];
+  const puntos = Array.from({length:14}).map(() => '<span></span>').join('');
+  resultado.innerHTML = `
+    <div class="ticket">
+      <div class="perforado">${puntos}</div>
+      <div class="ticket-cuerpo">
+        <div class="franja" style="--cat-color:${cat.color}">
+          <span class="dot"></span>
+          <span>${cat.etiqueta} · ${p.genero}</span>
+        </div>
+        <h2 class="titulo-pelicula">${p.titulo}</h2>
+        <p class="meta-pelicula">${p.anio} · Dirigida por ${p.director}</p>
+        <p class="sinopsis">${p.sinopsis}</p>
+        <div class="footer-ticket">
+          <span class="admision">Admisión general</span>
+          <span>Boleto n.º ${String(Math.floor(Math.random()*900)+100)}</span>
+        </div>
+      </div>
+      <div class="perforado abajo">${puntos}</div>
+    </div>
+  `;
+}
+
+validar();
+</script>
+</body>
+</html>
