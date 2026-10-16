@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  uploader:
+    image: filebrowser/filebrowser:v2.23.0
+    container_name: uploader
+    environment:
+      - USERNAME=${UPLOADER_USERNAME}
+      - PASSWORD=${UPLOADER_PASSWORD}
+    volumes:
+      - ${RUTA_BASE}:/srv
+    ports:
+      - "${PORT_FIREFOX}:80"
+    restart: unless-stopped
