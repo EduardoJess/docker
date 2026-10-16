@@ -13,6 +13,8 @@ services:
 
   firefox:
     image: jlesage/firefox
+    volumes:
+      - ${RUTA_BASE}:/config/downloads
     ports:
       - "${PORT_FIREFOX}:5800"
       
@@ -28,6 +30,8 @@ services:
       - "3001:3001"
     shm_size: "1gb"
     restart: unless-stopped
+    volumes:
+      - ${RUTA_BASE}:/config/redaccion_data
 
   libreoffice:
     image: lscr.io/linuxserver/libreoffice:latest
@@ -41,6 +45,8 @@ services:
       - "3003:3000"
     shm_size: "1gb"
     restart: unless-stopped
+    volumes:
+      - ${RUTA_BASE}:/config/redaccion_data
 
   jellyfin:
     image: jellyfin/jellyfin:latest
@@ -51,7 +57,6 @@ services:
       - TZ=Etc/UTC
     volumes:
       - ./jellyfin_config:/config
+      - ${RUTA_BASE}:/media
     restart: unless-stopped
-
-
-  
+    

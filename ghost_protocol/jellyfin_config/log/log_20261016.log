@@ -267,3 +267,7 @@ PRAGMA temp_store=2;
 [2026-10-16 10:41:06.421 +00:00] [INF] [11] Emby.Server.Implementations.ApplicationHost: Core startup complete
 [2026-10-16 10:41:06.421 +00:00] [INF] [11] Main: Startup complete 0:00:36.0179684
 [2026-10-16 10:41:07.111 +00:00] [INF] [20] Emby.Server.Implementations.ScheduledTasks.TaskManager: "Update Plugins" Completed after 0 minute(s) and 2 seconds
+[2026-10-16 10:46:37.479 +00:00] [INF] [23] Emby.Server.Implementations.Session.SessionManager: Sending shutdown notifications
+[2026-10-16 10:46:37.597 +00:00] [INF] [28] Main: Preparing the database for shutdown...
+[2026-10-16 10:46:37.839 +00:00] [INF] [28] Emby.Server.Implementations.ApplicationHost: Disposing "CoreAppHost"
+[2026-10-16 10:46:37.839 +00:00] [INF] [28] Emby.Server.Implementations.ApplicationHost: Disposing "Plugin"
