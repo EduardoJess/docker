@@ -41,3 +41,17 @@ services:
       - "3003:3000"
     shm_size: "1gb"
     restart: unless-stopped
+
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    ports:
+      - "${PORT_JELLYFIN}:8096"
+    environment:
+      - TZ=Etc/UTC
+    volumes:
+      - ./jellyfin_config:/config
+    restart: unless-stopped
+
+
+  
