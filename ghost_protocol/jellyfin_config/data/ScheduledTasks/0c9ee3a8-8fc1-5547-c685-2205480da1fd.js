@@ -1,0 +1,1 @@
+{"StartTimeUtc":"2026-10-23T10:30:25.4849856Z","EndTimeUtc":"2026-10-23T10:30:26.0348401Z","Status":"Completed","Name":"Refresh Channels","Key":"RefreshInternetChannels","Id":"0c9ee3a88fc15547c6852205480da1fd"}
